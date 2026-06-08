@@ -1,0 +1,314 @@
+\documentclass[UTF8,aspectratio=169]{ctexbeamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\graphicspath{{figures/}{figures/beamer_pairs/}}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{frametitle}{size=\large}
+\setbeamerfont{footnote}{size=\tiny}
+\setbeamerfont{normal text}{size=\small}
+
+\title{3D Gaussian Splatting 室内场景重建}
+\author[Guo, Han, Wang]{Jingyi Guo \quad PB22011958 \\ Siqi Han \quad PB22010386 \\ Yiru Wang \quad PB22081510}
+\date{2026 年 6 月}
+
+\newcommand{\refline}[1]{\vfill{\tiny #1}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{任务要求}
+\small
+\begin{itemize}
+\item 在共享室内测试场景上完成 3DGS 重建。
+\item 输出可渲染的新视角图像，并计算 PSNR 和 SSIM。
+\item 完成尺度标定和几何精度评估，给出多组测量结果。
+\item 分析失败区域，给出有针对性的改进。
+\item 提交技术文档、答辩材料、脚本、结果图、指标和模型文件。
+\end{itemize}
+\end{frame}
+
+\begin{frame}{完整流程}
+\small
+有了共享图像数据，首先需要恢复相机从哪里拍摄。获得相机位姿后，三维高斯才能从正确视角渲染并与真实图像比较。
+\begin{figure}
+\centering
+\includegraphics[width=0.94\linewidth]{pipeline.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}{COLMAP 和 SfM}
+\small
+有了多视角图像，需要估计相机位姿和稀疏三维点。COLMAP 使用 SfM 完成这一部分。
+\[
+\tilde{\mathbf{x}}_{ij} \sim K_i [R_i \mid \mathbf{t}_i]\tilde{\mathbf{X}}_j
+\]
+\begin{itemize}
+\item SIFT 提取稳定特征点。
+\item 特征匹配寻找不同图像中的同一物理点。
+\item RANSAC 去除错误匹配。
+\item 三角化恢复稀疏三维点。
+\item Bundle Adjustment 同时优化相机和三维点。
+\end{itemize}
+\refline{Schönberger and Frahm 2016. Lowe 2004. Fischler and Bolles 1981. Triggs et al. 2000.}
+\end{frame}
+
+\begin{frame}{3DGS 表示}
+\small
+有了相机位姿和稀疏点云，下一步把稀疏点扩展为可训练的三维高斯。
+\[
+G_i(\mathbf{x}) =
+\exp\left(-\frac{1}{2}
+(\mathbf{x}-\boldsymbol{\mu}_i)^T
+\Sigma_i^{-1}
+(\mathbf{x}-\boldsymbol{\mu}_i)\right)
+\]
+\[
+\Sigma_i = R_i S_i S_i^T R_i^T
+\]
+\begin{itemize}
+\item 每个高斯包含位置、尺度、旋转、颜色和不透明度。
+\item 高斯投影到图像平面后形成二维椭圆 footprint。
+\item 训练会调整高斯参数，使渲染图接近真实图。
+\end{itemize}
+\refline{Kerbl et al. 2023.}
+\end{frame}
+
+\begin{frame}{可微渲染}
+\small
+有了三维高斯，模型需要从指定相机视角合成二维图像。多个高斯对同一像素贡献颜色时使用 alpha 合成。
+\[
+\mathbf{C} =
+\sum_{i=1}^{N} T_i \alpha_i \mathbf{c}_i,
+\quad
+T_i = \prod_{k<i}(1-\alpha_k)
+\]
+\[
+\mathcal{L} =
+(1-\lambda)\|\hat{\mathbf{I}}-\mathbf{I}\|_1
+\lambda(1-\mathrm{SSIM})
+\]
+\begin{itemize}
+\item 可微渲染把图像误差反向传回三维高斯参数。
+\item 本实验加入低学习率 finetune、有限增密和边缘一致性约束。
+\end{itemize}
+\refline{Kerbl et al. 2023.}
+\end{frame}
+
+\begin{frame}{PSNR 和 SSIM}
+\small
+在汇报结果之前，先定义两个图像质量指标。
+\[
+\mathrm{MSE}=
+\frac{1}{HW}\sum_{u,v}
+\|\hat{\mathbf{I}}(u,v)-\mathbf{I}(u,v)\|_2^2
+\]
+\[
+\mathrm{PSNR}=10\log_{10}\frac{1}{\mathrm{MSE}}
+\]
+\[
+\mathrm{SSIM}(x,y)=
+\frac{(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)}
+{(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)}
+\]
+\begin{itemize}
+\item PSNR 越高，像素误差越小。
+\item SSIM 越接近 1，结构相似度越高。
+\end{itemize}
+\refline{Wang et al. 2004.}
+\end{frame}
+
+\begin{frame}{COLMAP 结果}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+序列 & 输入 & 注册 & 注册率 & 稀疏点 \\
+\midrule
+Sequence 01 & 187 & 187 & 1.000 & 41327 \\
+Sequence 02 & 80 & 49 & 0.613 & 13667 \\
+Sequence 03 & 120 & 120 & 1.000 & 54290 \\
+Sequence 04 & 80 & 80 & 1.000 & 40064 \\
+Sequence 05 & 422 & 422 & 1.000 & 135204 \\
+\bottomrule
+\end{tabular}
+\vspace{0.4cm}
+
+除 Sequence 02 外，其余序列均完整注册。Sequence 02 注册率较低，说明该片段存在弱纹理或匹配不足。
+\end{frame}
+
+\begin{frame}{调参策略}
+\small
+\begin{itemize}
+\item 数据侧采用清晰度筛选和局部分区，减少模糊帧和弱覆盖区域影响。
+\item COLMAP 侧检查注册率和稀疏点云覆盖情况。
+\item 3DGS 侧采用较长训练、低学习率 finetune、有限增密和边缘一致性项。
+\item 进阶方法侧实跑 Mip Splatting、2DGS 和 Depth RegularizedGS。
+\end{itemize}
+\begin{tabular}{lrrr}
+\toprule
+序列 & 基线 PSNR & 最终 PSNR & 增益 \\
+\midrule
+Sequence 03 & 23.42 & 26.33 & 2.91 \\
+Sequence 04 & 25.30 & 28.36 & 3.05 \\
+Sequence 05 & 25.17 & 26.39 & 1.21 \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{最终渲染指标}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+序列 & 图像数 & 高斯数 & PSNR & SSIM \\
+\midrule
+Sequence 01 & 187 & 69507 & 26.36 & 0.836 \\
+Sequence 02 & 49 & 20718 & 30.15 & 0.884 \\
+Sequence 03 & 120 & 64675 & 26.33 & 0.813 \\
+Sequence 04 & 80 & 50663 & 28.36 & 0.811 \\
+Sequence 05 & 422 & 145975 & 26.39 & 0.812 \\
+\bottomrule
+\end{tabular}
+\begin{figure}
+\centering
+\includegraphics[width=0.58\linewidth]{final_render_quality.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Sequence 01 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.68\textheight,keepaspectratio]{sequence_01_pair_1.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Sequence 02 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.68\textheight,keepaspectratio]{sequence_02_pair_1.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Sequence 03 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.68\textheight,keepaspectratio]{sequence_03_pair_1.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Sequence 04 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.68\textheight,keepaspectratio]{sequence_04_pair_1.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Sequence 05 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.68\textheight,keepaspectratio]{sequence_05_pair_1.jpg}
+\end{figure}
+\end{frame}
+
+\begin{frame}{进阶方法对比}
+\scriptsize
+\begin{tabular}{lrr}
+\toprule
+方法 & PSNR & SSIM \\
+\midrule
+受控 3DGS finetune & 28.36 & 0.811 \\
+Mip Splatting & 27.77 & 0.811 \\
+2DGS & 27.18 & 0.796 \\
+Depth RegularizedGS & 15.92 & 0.662 \\
+\bottomrule
+\end{tabular}
+\vspace{0.05cm}
+\begin{center}
+\includegraphics[height=0.30\textheight,keepaspectratio]{advanced_methods_comparison.png}
+\end{center}
+\refline{Yu et al. 2024. Huang et al. 2024. Chung et al. 2024.}
+\end{frame}
+
+\begin{frame}{Mip Splatting 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.66\textheight,keepaspectratio]{sequence04_mip_pair.jpg}
+\end{figure}
+\refline{Yu et al. 2024.}
+\end{frame}
+
+\begin{frame}{2DGS 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.66\textheight,keepaspectratio]{sequence04_twodgs_pair.jpg}
+\end{figure}
+\refline{Huang et al. 2024.}
+\end{frame}
+
+\begin{frame}{Depth RegularizedGS 结果}
+\begin{figure}
+\centering
+\includegraphics[height=0.66\textheight,keepaspectratio]{sequence04_depth_regularized_pair.jpg}
+\end{figure}
+\refline{Chung et al. 2024.}
+\end{frame}
+
+\begin{frame}{几何精度}
+\small
+\[
+\mathbf{q}_i \approx sR\mathbf{p}_i+\mathbf{t}
+\]
+\begin{tabular}{lrrrr}
+\toprule
+序列 & 平均误差 m & 中位误差 m & 20 cm 内 & 10 cm 内 \\
+\midrule
+Sequence 01 & 0.277 & 0.195 & 0.510 & 0.254 \\
+Sequence 02 & 0.740 & 0.256 & 0.433 & 0.235 \\
+Sequence 03 & 0.280 & 0.204 & 0.494 & 0.267 \\
+Sequence 04 & 0.246 & 0.155 & 0.602 & 0.327 \\
+Sequence 05 & 0.251 & 0.188 & 0.523 & 0.286 \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{失败区域}
+\small
+\begin{itemize}
+\item 白色弱纹理柜面和墙面缺少稳定梯度，COLMAP 特征和图像监督都较弱。
+\item 反光区域存在视角相关高光，静态颜色高斯难以同时解释多个视角。
+\item 黑色线条、门框、线缆、文字和地毯色块恢复较稳定，因为它们提供高对比特征。
+\item 后续可加入反光 mask、可靠深度正则、线段监督、平面约束、Mip Splatting 和分区训练。
+\end{itemize}
+\end{frame}
+
+\begin{frame}{结论}
+\small
+\begin{itemize}
+\item 五个序列的平均 PSNR 均超过 25 dB。
+\item Sequence 04 达到 28.36 dB，满足优秀档位。
+\item Sequence 04 和 Sequence 05 的全局中位几何误差低于 20 cm，局部区域达到 10 cm 附近。
+\item Mip Splatting 和 2DGS 均完成实跑，指标接近最终 3DGS finetune。
+\item Depth RegularizedGS 完成配置、训练和渲染，但在当前稀疏深度设置下效果较弱。
+\end{itemize}
+\end{frame}
+
+\begin{frame}{交付内容}
+\small
+\begin{itemize}
+\item 完整实验报告 PDF。
+\item 答辩 beamer PDF。
+\item 五个序列的渲染图、真实图对比和指标表。
+\item 几何评估脚本和精度数据。
+\item 可被 SuperSplat 或 3DGS viewer 打开的 PLY 模型。
+\item Mip Splatting、2DGS、Depth RegularizedGS 的训练输出和对比结果。
+\item 可复现实验的全部脚本和成员信息。
+\end{itemize}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,242 @@
+[
+  {
+    "image": "frame_00001.jpg",
+    "masked_ratio": 0.07800597623682475,
+    "white_ratio": 0.06652516726374508,
+    "motion_ratio": 0.0
+  },
+  {
+    "image": "frame_00003.jpg",
+    "masked_ratio": 0.7090197008609925,
+    "white_ratio": 0.04476997486272649,
+    "motion_ratio": 0.5984143342439461
+  },
+  {
+    "image": "frame_00005.jpg",
+    "masked_ratio": 0.7429113979268566,
+    "white_ratio": 0.04489675178441925,
+    "motion_ratio": 0.6501120544404639
+  },
+  {
+    "image": "frame_00007.jpg",
+    "masked_ratio": 0.5546013206610939,
+    "white_ratio": 0.023805434231404687,
+    "motion_ratio": 0.44108417442323317
+  },
+  {
+    "image": "frame_00009.jpg",
+    "masked_ratio": 0.6250892891222675,
+    "white_ratio": 0.03315148342630308,
+    "motion_ratio": 0.5355370706624571
+  },
+  {
+    "image": "frame_00011.jpg",
+    "masked_ratio": 0.5339693990501273,
+    "white_ratio": 0.04746364365052101,
+    "motion_ratio": 0.44942282420812135
+  },
+  {
+    "image": "frame_00013.jpg",
+    "masked_ratio": 0.7023891315371906,
+    "white_ratio": 0.07025758889379638,
+    "motion_ratio": 0.6020745066605596
+  },
+  {
+    "image": "frame_00015.jpg",
+    "masked_ratio": 0.8000905159957032,
+    "white_ratio": 0.07147083040246902,
+    "motion_ratio": 0.7071453108897287
+  },
+  {
+    "image": "frame_00017.jpg",
+    "masked_ratio": 0.6693535194909294,
+    "white_ratio": 0.06449537332395457,
+    "motion_ratio": 0.5659976116863784
+  },
+  {
+    "image": "frame_00019.jpg",
+    "masked_ratio": 0.6860771676127224,
+    "white_ratio": 0.07848854645488104,
+    "motion_ratio": 0.5544186528384398
+  },
+  {
+    "image": "frame_00021.jpg",
+    "masked_ratio": 0.7455437230428642,
+    "white_ratio": 0.09109671579613181,
+    "motion_ratio": 0.5873970107910335
+  },
+  {
+    "image": "frame_00023.jpg",
+    "masked_ratio": 0.7520747792991008,
+    "white_ratio": 0.08526225101285217,
+    "motion_ratio": 0.6326386503301653
+  },
+  {
+    "image": "frame_00025.jpg",
+    "masked_ratio": 0.5995553265391809,
+    "white_ratio": 0.1379959976662141,
+    "motion_ratio": 0.5070845124950244
+  },
+  {
+    "image": "frame_00027.jpg",
+    "masked_ratio": 0.6361447819709586,
+    "white_ratio": 0.1553671623235347,
+    "motion_ratio": 0.5222650264732024
+  },
+  {
+    "image": "frame_00029.jpg",
+    "masked_ratio": 0.7732219877530767,
+    "white_ratio": 0.07134405348077626,
+    "motion_ratio": 0.6015537670467248
+  },
+  {
+    "image": "frame_00031.jpg",
+    "masked_ratio": 0.7888659872514218,
+    "white_ratio": 0.06824960603730786,
+    "motion_ratio": 0.6503260756953646
+  },
+  {
+    "image": "frame_00033.jpg",
+    "masked_ratio": 0.6997895230461358,
+    "white_ratio": 0.051643192488262914,
+    "motion_ratio": 0.6025488977223776
+  },
+  {
+    "image": "frame_00035.jpg",
+    "masked_ratio": 0.7012576815909004,
+    "white_ratio": 0.06668057123227168,
+    "motion_ratio": 0.6132867666704837
+  },
+  {
+    "image": "frame_00037.jpg",
+    "masked_ratio": 0.7388477204691564,
+    "white_ratio": 0.05984279661710098,
+    "motion_ratio": 0.6520273401929191
+  },
+  {
+    "image": "frame_00039.jpg",
+    "masked_ratio": 0.7631657151581576,
+    "white_ratio": 0.13796055465584836,
+    "motion_ratio": 0.6360084627003212
+  },
+  {
+    "image": "frame_00041.jpg",
+    "masked_ratio": 0.6837760983243635,
+    "white_ratio": 0.15263396094725534,
+    "motion_ratio": 0.574202668586042
+  },
+  {
+    "image": "frame_00043.jpg",
+    "masked_ratio": 0.6984972163604936,
+    "white_ratio": 0.15574885628131935,
+    "motion_ratio": 0.5649765803493045
+  },
+  {
+    "image": "frame_00045.jpg",
+    "masked_ratio": 0.6968736538472025,
+    "white_ratio": 0.11476174117877999,
+    "motion_ratio": 0.5830020775056846
+  },
+  {
+    "image": "frame_00047.jpg",
+    "masked_ratio": 0.5737378198731685,
+    "white_ratio": 0.10986651617019189,
+    "motion_ratio": 0.4669889254224534
+  },
+  {
+    "image": "frame_00049.jpg",
+    "masked_ratio": 0.4774105336626807,
+    "white_ratio": 0.09963711810156331,
+    "motion_ratio": 0.3713759521901054
+  },
+  {
+    "image": "frame_00051.jpg",
+    "masked_ratio": 0.5362650155676607,
+    "white_ratio": 0.06500929697425747,
+    "motion_ratio": 0.44681639975353477
+  },
+  {
+    "image": "frame_00053.jpg",
+    "masked_ratio": 0.7088165851477428,
+    "white_ratio": 0.057154580600131955,
+    "motion_ratio": 0.6388997944305399
+  },
+  {
+    "image": "frame_00055.jpg",
+    "masked_ratio": 0.6571202281439313,
+    "white_ratio": 0.08724842278603873,
+    "motion_ratio": 0.5313111732726985
+  },
+  {
+    "image": "frame_00057.jpg",
+    "masked_ratio": 0.739429803754778,
+    "white_ratio": 0.12439406084201687,
+    "motion_ratio": 0.5826012988500107
+  },
+  {
+    "image": "frame_00059.jpg",
+    "masked_ratio": 0.7561998004285878,
+    "white_ratio": 0.14876658323927303,
+    "motion_ratio": 0.6260080810063634
+  },
+  {
+    "image": "frame_00061.jpg",
+    "masked_ratio": 0.48414197924675423,
+    "white_ratio": 0.07759701842491262,
+    "motion_ratio": 0.35960341997786177
+  },
+  {
+    "image": "frame_00063.jpg",
+    "masked_ratio": 0.6871649953924086,
+    "white_ratio": 0.11528520717802751,
+    "motion_ratio": 0.5468556597034783
+  },
+  {
+    "image": "frame_00065.jpg",
+    "masked_ratio": 0.5321836166047778,
+    "white_ratio": 0.19590442383297071,
+    "motion_ratio": 0.3506186168501524
+  },
+  {
+    "image": "frame_00067.jpg",
+    "masked_ratio": 0.3671187013681002,
+    "white_ratio": 0.17585185912221296,
+    "motion_ratio": 0.18671923137742444
+  },
+  {
+    "image": "frame_00069.jpg",
+    "masked_ratio": 0.4665417982147628,
+    "white_ratio": 0.1922715152704847,
+    "motion_ratio": 0.27089092822517763
+  },
+  {
+    "image": "frame_00071.jpg",
+    "masked_ratio": 0.47527713707720576,
+    "white_ratio": 0.15531808738610525,
+    "motion_ratio": 0.30528155382157446
+  },
+  {
+    "image": "frame_00073.jpg",
+    "masked_ratio": 0.4584989612471577,
+    "white_ratio": 0.06541007562993136,
+    "motion_ratio": 0.3765533580889129
+  },
+  {
+    "image": "frame_00075.jpg",
+    "masked_ratio": 0.4414386045268903,
+    "white_ratio": 0.07066518351300213,
+    "motion_ratio": 0.3427952539082735
+  },
+  {
+    "image": "frame_00077.jpg",
+    "masked_ratio": 0.5038196659632592,
+    "white_ratio": 0.06358748698150965,
+    "motion_ratio": 0.41632586849007325
+  },
+  {
+    "image": "frame_00080.jpg",
+    "masked_ratio": 0.7758584024472035,
+    "white_ratio": 0.1733776643601446,
+    "motion_ratio": 0.6810224490574885
+  }
+]

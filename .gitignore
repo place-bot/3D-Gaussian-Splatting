@@ -1,0 +1,67 @@
+# Archive packages regenerated locally
+*.zip
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# LaTeX temporary files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.synctex.gz
+
+# Submission folders are regenerated from root artifacts
+submission/
+submission_minimal/
+submission_slim/
+speech_stage2.md
+
+# COLMAP databases and bulky generated cache
+*.db
+work/**/colmap/database.db
+work/**/colmap/dense/
+work/**/colmap/stereo/
+work/**/undistorted/stereo/
+work/**/undistorted/dense/
+
+# Repeated rendered image folders inside model outputs
+# Figure grids and metric tables are kept under figures and tables.
+work/**/output/train/
+work/**/output/test/
+
+# Old or exploratory variants kept in tables but not needed for collaboration.
+work/Sequence_01/enhanced/
+work/Sequence_01/baseline/
+work/Sequence_01/improved/
+work/Sequence_01/full/
+work/Sequence_02/full/
+work/Sequence_02/optimized/
+work/Sequence_02/partition_mid_hq/
+work/Sequence_02/partition_mid_tuned/
+work/Sequence_03/full/
+work/Sequence_03/full_finetune/
+work/Sequence_04/full/
+work/Sequence_04/optimized/
+work/Sequence_04/optimized_finetune/
+work/Sequence_04/depth_regularized/
+work/Sequence_05/full/
+
+# External repository download archives and build products
+external/**/*.zip
+external/submodule_archives/
+external/**/__pycache__/
+external/**/build/
+external/**/*.egg-info/
+external/**/*.dist-info/
+external/**/*.pyd
+external/**/*.obj
+external/**/*.lib
+external/**/*.exp
+external/**/.git/
+external/**/third_party/glm/doc/
+external/**/third_party/glm/test/

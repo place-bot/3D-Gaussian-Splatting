@@ -1,0 +1,13 @@
+{
+  "image_count": 80,
+  "selected_image_count": 24,
+  "mean_psnr": 25.30277233927567,
+  "mean_ssim": 0.7274509117007255,
+  "min_psnr": 16.739176289729542,
+  "max_psnr": 30.563763470786487,
+  "gaussian_count": 50663,
+  "width": 570,
+  "height": 768,
+  "iterations": 14000,
+  "additional_iterations": 14000
+}

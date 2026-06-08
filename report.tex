@@ -1,0 +1,493 @@
+\documentclass[UTF8,a4paper,11pt]{ctexart}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+\graphicspath{{figures/}{figures/beamer_pairs/}}
+
+\title{三维高斯室内场景重建实验报告}
+\author{Jingyi Guo \quad PB22011958 \and Siqi Han \quad PB22010386 \and Yiru Wang \quad PB22081510}
+\date{2026 年 6 月}
+
+\begin{document}
+\maketitle
+
+\section{成员信息}
+
+\begin{table}[H]
+\centering
+\caption{成员与分工}
+\begin{tabular}{p{0.20\linewidth}p{0.18\linewidth}p{0.52\linewidth}}
+\toprule
+成员 & 学号 & 主要分工 \\
+\midrule
+Jingyi Guo & PB22011958 & 数据准备、COLMAP 重建、3DGS 训练、报告整合 \\
+Siqi Han & PB22010386 & 进阶方法调研、Mip Splatting 与 2DGS 对照、问题分析 \\
+Yiru Wang & PB22081510 & 精度评估、结果核查、答辩材料整理 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{研究背景}
+
+旧改施工室内重建要求从普通手机视频或多视角照片中恢复可观察、可渲染、可测量的三维场景。该任务同时涉及相机位姿估计、稀疏三维结构恢复、可微渲染、三维表示优化和精度评估。作业要求在共享室内测试场景上完成重建，输出新视角渲染结果，计算 PSNR 和 SSIM，给出至少五组尺度测量数据，并分析失败区域和改进策略。
+
+本实验采用 COLMAP 的 Structure from Motion 流程恢复相机位姿和稀疏点云，再使用 3D Gaussian Splatting 对场景进行可微渲染优化。为了满足进阶改进要求，本实验进一步实现并运行了数据筛选、分区训练、受控 finetune、Mip Splatting、2D Gaussian Splatting 和 Depth RegularizedGS。最终结果显示，受控 3DGS finetune 在 Sequence 04 上达到平均 PSNR 28.36 dB，Mip Splatting 达到 27.77 dB，2DGS 达到 27.18 dB。Depth RegularizedGS 在本实验设置下完成训练和渲染，但平均 PSNR 为 15.92 dB，说明稀疏深度监督和当前室内数据之间存在明显适配问题。
+
+\section{任务与交付结构}
+
+作业 Stage 2 的核心评分点包括重建质量、精度评估、问题分析与创新改进、技术文档和答辩。最终提交包按照助教检查顺序组织，报告、展示材料、结果图、指标表、模型文件、代码脚本和成员信息均放在独立目录中。
+
+\begin{table}[H]
+\centering
+\caption{提交内容说明}
+\begin{tabular}{p{0.30\linewidth}p{0.62\linewidth}}
+\toprule
+目录 & 内容 \\
+\midrule
+01\_report\_complete & 完整实验报告 PDF 和报告源文件 \\
+02\_presentation & 答辩 beamer PDF 和源文件 \\
+03\_results & 五个共享序列的渲染图、对比图、指标表、几何精度结果和可视化 \\
+03\_results/models & 可被 SuperSplat 或 3DGS viewer 打开的 PLY 模型，以及主要训练 checkpoint \\
+03\_results\newline advanced\_methods & Mip Splatting、2DGS、Depth RegularizedGS 的输出与对比指标 \\
+04\_code\_scripts & 数据准备、COLMAP、训练、渲染、指标计算、几何评估和打包脚本 \\
+05\_member\_info & 成员信息和分工说明 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{方法}
+
+\subsection{整体流程}
+
+实验流程如图 \ref{fig:pipeline} 所示。输入为共享测试场景图像。首先对序列做数据筛选和分区，去除模糊帧和弱覆盖片段。随后使用 COLMAP 估计相机内参、相机外参和稀疏点云。再将稀疏点云作为三维高斯初始化，进行基线训练、受控 finetune 和进阶方法训练。最后从渲染质量和几何精度两个角度评估结果。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.94\linewidth]{pipeline.png}
+\caption{Stage 2 室内重建流程}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{相机模型}
+
+多视角重建首先需要建立三维点到二维像素的投影关系。针孔相机模型可以写为
+\[
+\tilde{\mathbf{x}}_{ij} \sim K_i
+\begin{bmatrix}
+R_i & \mathbf{t}_i
+\end{bmatrix}
+\tilde{\mathbf{X}}_j .
+\]
+其中 \(\mathbf{X}_j\) 表示第 \(j\) 个三维点，\(\mathbf{x}_{ij}\) 表示该点在第 \(i\) 张图像中的二维观测，\(K_i\) 为相机内参，包含焦距、主点和图像尺寸，\(R_i\) 与 \(\mathbf{t}_i\) 为相机外参，描述相机位置和朝向。3DGS 每次渲染都依赖该投影关系，因此相机位姿是训练的必要输入。
+
+\subsection{COLMAP 与 SfM}
+
+COLMAP 是 Schönberger 和 Frahm 提出的通用 SfM 与 MVS 系统。SfM 的全称为 Structure from Motion，含义是从相机运动恢复三维结构。该方法假设场景在采集过程中保持静止，相机从不同位置观察同一场景。COLMAP 通过特征点提取、特征匹配、几何验证、图像注册、三角化和 Bundle Adjustment 得到相机位姿和稀疏点云。
+
+特征点使用 SIFT。SIFT 由 Lowe 提出，用尺度空间极值和局部梯度方向构造描述子，使特征在尺度变化、旋转变化和一定光照变化下仍具有稳定性。特征匹配会产生错误对应，COLMAP 使用 RANSAC 进行几何验证。RANSAC 由 Fischler 和 Bolles 提出，通过随机采样估计模型，并以最大内点集合筛除外点。
+
+Bundle Adjustment 的目标是同时优化相机参数和三维点位置，使重投影误差最小。优化目标为
+\[
+\min_{\{R_i,\mathbf{t}_i\},\{\mathbf{X}_j\}}
+\sum_{i,j}
+\left\|
+\pi\left(K_i(R_i\mathbf{X}_j+\mathbf{t}_i)\right)
+- \mathbf{x}_{ij}
+\right\|_2^2 .
+\]
+其中 \(\pi\) 表示齐次坐标归一化后的投影函数。Bundle Adjustment 使稀疏点云和相机轨迹在同一坐标系下更加一致。
+
+\subsection{三维高斯表示}
+
+3D Gaussian Splatting 由 Kerbl、Kopanas、Leimkühler 和 Drettakis 于 2023 年提出。该方法用一组三维高斯表示场景。第 \(i\) 个高斯包含中心 \(\boldsymbol{\mu}_i\)、协方差 \(\Sigma_i\)、颜色参数 \(\mathbf{c}_i\) 和不透明度 \(\alpha_i\)。三维高斯密度可写为
+\[
+G_i(\mathbf{x}) =
+\exp\left(
+-\frac{1}{2}
+(\mathbf{x}-\boldsymbol{\mu}_i)^T
+\Sigma_i^{-1}
+(\mathbf{x}-\boldsymbol{\mu}_i)
+\right).
+\]
+协方差使用尺度和旋转分解
+\[
+\Sigma_i = R_i S_i S_i^T R_i^T .
+\]
+这种各向异性表示允许高斯沿不同方向伸展，从而贴近墙面、柜面、地面和边缘结构。
+
+渲染时，高斯被投影到图像平面并形成二维椭圆 footprint。对同一像素有贡献的高斯按照深度顺序进行 alpha 合成
+\[
+\mathbf{C} =
+\sum_{i=1}^{N}
+T_i \alpha_i \mathbf{c}_i,
+\quad
+T_i =
+\prod_{k<i}(1-\alpha_k).
+\]
+其中 \(T_i\) 表示第 \(i\) 个高斯前方所有高斯的透射率。该公式同时表达颜色累积和遮挡关系。
+
+\subsection{训练目标}
+
+训练目标是使渲染图像 \(\hat{\mathbf{I}}\) 接近真实图像 \(\mathbf{I}\)。基础损失由 L1 损失和结构相似项组成
+\[
+\mathcal{L}
+=
+(1-\lambda)\|\hat{\mathbf{I}}-\mathbf{I}\|_1
+\lambda (1-\mathrm{SSIM}(\hat{\mathbf{I}},\mathbf{I})).
+\]
+本实验的受控 finetune 还加入了边缘一致性项和轻量不透明度正则。边缘项使用 Sobel 梯度
+\[
+\mathcal{L}_{edge}
+=
+\|\nabla \hat{\mathbf{I}}-\nabla \mathbf{I}\|_1 .
+\]
+该项鼓励门框、黑色线条、柜体边缘和纹理边界保持清晰。实际调参表明，过强的结构损失和过大的增密会导致 opacity 和颜色不稳定，因此最终方案采用较低学习率、有限增密和较长 finetune。
+
+\subsection{Mip Splatting}
+
+Mip Splatting 针对 3DGS 在尺度变化和远近景渲染中容易出现的 aliasing 问题，引入频率约束和三维平滑滤波思想。室内场景中相机与墙面、柜面、地面距离变化明显，Mip Splatting 能改善远近视角一致性。本实验在 Sequence 04 的最佳分区上编译并运行官方 Mip Splatting 仓库，训练 12000 次并导出融合 PLY。
+
+\subsection{2D Gaussian Splatting}
+
+2D Gaussian Splatting 将三维高斯椭球改为面片化二维高斯，更偏向显式表面表示。室内场景中墙面、柜门、地面等主体结构接近平面，该表示具有更强几何先验。本实验在 Windows CUDA 环境下补齐其 diff-surfel-rasterization、simple-knn 和 glm 子模块，并在 Sequence 04 上训练 12000 次。渲染图和 PSNR、SSIM 指标均完成，网格后处理由于 TSDF 提取零顶点未作为最终几何输出。
+
+\subsection{Depth RegularizedGS}
+
+Depth RegularizedGS 由 Chung、Oh 和 Lee 提出，用深度监督和深度正则约束 3DGS。该方法在少视角图像中通过深度一致性缓解几何退化。本实验编译了其深度光栅器，并在当前 Windows 环境中补齐本地 pytorch3d 兼容接口。训练时使用 COLMAP 稀疏深度并开启 depth 和 usedepthReg。该方法完成 12000 次训练和 80 张图渲染，但指标显著低于最终方案，说明稀疏深度约束、室内反光和当前深度权重设置之间存在不适配。
+
+\section{评价指标}
+
+\subsection{PSNR}
+
+PSNR 全称为 Peak Signal to Noise Ratio。图像像素归一化到 \([0,1]\) 后，均方误差为
+\[
+\mathrm{MSE}
+=
+\frac{1}{HW}
+\sum_{u,v}
+\|\hat{\mathbf{I}}(u,v)-\mathbf{I}(u,v)\|_2^2 .
+\]
+PSNR 为
+\[
+\mathrm{PSNR}
+=
+10\log_{10}\frac{1}{\mathrm{MSE}} .
+\]
+数值越高，渲染图与真实图越接近。作业要求 PSNR 达到 20 dB。一般而言，20 dB 说明结构可辨，25 dB 说明质量较好，28 dB 以上说明室内重建结果具有较强视觉一致性。
+
+\subsection{SSIM}
+
+SSIM 全称为 Structural Similarity Index Measure，由 Wang、Bovik、Sheikh 和 Simoncelli 提出。SSIM 同时考虑亮度、对比度和结构，公式为
+\[
+\mathrm{SSIM}(x,y)
+=
+\frac{
+(2\mu_x\mu_y+C_1)(2\sigma_{xy}+C_2)
+}{
+(\mu_x^2+\mu_y^2+C_1)(\sigma_x^2+\sigma_y^2+C_2)
+}.
+\]
+其中 \(\mu_x,\mu_y\) 为均值，\(\sigma_x^2,\sigma_y^2\) 为方差，\(\sigma_{xy}\) 为协方差，\(C_1,C_2\) 为稳定常数。SSIM 越接近 1，结构一致性越高。
+
+\subsection{几何精度}
+
+COLMAP 和 3DGS 的坐标尺度具有任意性，几何精度评估必须进行尺度对齐。给定重建点 \(\mathbf{p}_i\) 和参考点 \(\mathbf{q}_i\)，使用相似变换
+\[
+\mathbf{q}_i \approx sR\mathbf{p}_i+\mathbf{t}.
+\]
+实验使用点云配准得到尺度 \(s\)、旋转 \(R\) 和平移 \(\mathbf{t}\)，再计算点到参考点云的距离。主要指标包括平均误差、中位误差、RMSE、90 分位误差、20 cm 以内点比例和 10 cm 以内点比例。
+
+\section{实验设置}
+
+\subsection{数据与环境}
+
+实验使用共享室内测试场景，包含 Sequence 01 到 Sequence 05。训练环境为 Windows，Python 解释器为
+\[
+\texttt{C:\textbackslash Users\textbackslash gjy20\textbackslash .conda\textbackslash envs\textbackslash exp3\textbackslash python.exe}.
+\]
+GPU 为 NVIDIA RTX 4060 Laptop GPU。PyTorch 版本为 2.5.1，CUDA 运行时为 12.1。COLMAP 用于相机位姿估计，gsplat 和官方进阶仓库用于训练和渲染。
+
+\subsection{数据筛选与分区}
+
+共享室内序列中存在相机运动速度变化、模糊帧、弱纹理墙面、反光柜面和重复纹理。直接使用全序列训练会增加计算量，并使局部弱覆盖区域影响整体优化。本实验采用以下策略。
+
+\begin{enumerate}
+\item 统计每帧清晰度和可匹配性，保留质量较高的连续片段。
+\item 对 Sequence 03 和 Sequence 04 使用分区训练，使同一模型面对更稳定的相机轨迹和更一致的局部场景。
+\item 对最终模型使用低学习率 finetune，减少强增密导致的浮动高斯。
+\item 对进阶方法统一使用 Sequence 04 的最佳分区，以便公平比较。
+\end{enumerate}
+
+\section{结果}
+
+\subsection{COLMAP 结果}
+
+\begin{table}[H]
+\centering
+\caption{COLMAP 注册结果}
+\begin{tabular}{lrrrr}
+\toprule
+序列 & 输入图像 & 注册图像 & 注册率 & 稀疏点数 \\
+\midrule
+Sequence 01 & 187 & 187 & 1.000 & 41327 \\
+Sequence 02 & 80 & 49 & 0.613 & 13667 \\
+Sequence 03 & 120 & 120 & 1.000 & 54290 \\
+Sequence 04 & 80 & 80 & 1.000 & 40064 \\
+Sequence 05 & 422 & 422 & 1.000 & 135204 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sequence 02 的注册率低于其他序列，说明该片段存在较多弱纹理、运动模糊或相邻视角匹配不足的情况。其他序列均达到完整注册，说明相机轨迹和特征匹配满足 3DGS 训练需求。
+
+\subsection{渲染质量}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{final_render_quality.png}
+\caption{最终渲染质量}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{最终渲染指标}
+\begin{tabular}{lrrrrrr}
+\toprule
+序列 & 图像数 & 高斯数 & 平均 PSNR & 最低 PSNR & 平均 SSIM & 28 dB 以上 \\
+\midrule
+Sequence 01 & 187 & 69507 & 26.36 & 15.08 & 0.836 & 51 \\
+Sequence 02 & 49 & 20718 & 30.15 & 25.04 & 0.884 & 45 \\
+Sequence 03 & 120 & 64675 & 26.33 & 21.38 & 0.813 & 24 \\
+Sequence 04 & 80 & 50663 & 28.36 & 17.16 & 0.811 & 50 \\
+Sequence 05 & 422 & 145975 & 26.39 & 17.41 & 0.812 & 98 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+五个序列的平均 PSNR 均超过 25 dB。Sequence 04 超过 28 dB，Sequence 02 达到 30.15 dB。最低 PSNR 低的视角主要对应弱纹理墙面、局部反光和相机快速运动片段，但平均质量满足作业中良好和优秀档位要求。
+
+\subsection{可视化结果}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence_01_pair_1.jpg}
+\caption{Sequence 01 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence_02_pair_1.jpg}
+\caption{Sequence 02 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence_03_pair_1.jpg}
+\caption{Sequence 03 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence_04_pair_1.jpg}
+\caption{Sequence 04 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence_05_pair_1.jpg}
+\caption{Sequence 05 真实图与渲染图}
+\end{figure}
+
+可视化结果显示，房间主要结构、柜体轮廓、门框、地面和大色块均能辨认。局部文字、黑色线条和高对比边缘恢复相对稳定。白色弱纹理柜面和反光墙面仍存在模糊和半透明高斯，说明纯图像监督对低梯度区域约束较弱。
+
+\subsection{消融实验}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{final_ablation_gain.png}
+\caption{调参前后渲染质量对比}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{调参消融结果}
+\begin{tabular}{lrrr}
+\toprule
+序列 & 基线 PSNR & 最终 PSNR & 增益 \\
+\midrule
+Sequence 01 & 25.67 & 26.36 & 0.69 \\
+Sequence 02 & 28.20 & 30.15 & 1.95 \\
+Sequence 03 & 23.42 & 26.33 & 2.91 \\
+Sequence 04 & 25.30 & 28.36 & 3.05 \\
+Sequence 05 & 25.17 & 26.39 & 1.21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+分区和 finetune 对 Sequence 03 和 Sequence 04 的提升最明显。Sequence 04 从 25.30 dB 提升到 28.36 dB，说明去除低质量片段和延长稳定训练能显著提升室内局部重建质量。强 SSIM、强边缘损失和过大增密的实验曾使 Sequence 02 降到 8.73 dB 和 18.66 dB，原因是高斯数量过快增长后 opacity 与颜色出现不稳定。最终方案控制增密速度，并用低学习率继续优化。
+
+\subsection{进阶方法对比}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\linewidth]{advanced_methods_comparison.png}
+\caption{Sequence 04 进阶方法对比}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Sequence 04 进阶方法指标}
+\begin{tabular}{lrrr}
+\toprule
+方法 & 图像数 & 平均 PSNR & 平均 SSIM \\
+\midrule
+受控 3DGS finetune & 80 & 28.36 & 0.811 \\
+Mip Splatting & 80 & 27.77 & 0.811 \\
+2DGS & 80 & 27.18 & 0.796 \\
+Depth RegularizedGS & 80 & 15.92 & 0.662 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence04_mip_pair.jpg}
+\caption{Mip Splatting 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence04_twodgs_pair.jpg}
+\caption{2DGS 真实图与渲染图}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\linewidth]{sequence04_depth_regularized_pair.jpg}
+\caption{Depth RegularizedGS 真实图与渲染图}
+\end{figure}
+
+进阶方法中，Mip Splatting 与 2DGS 均完成训练、渲染和指标计算。Mip Splatting 的平均 PSNR 为 27.77 dB，接近最终 3DGS finetune，并且最低 PSNR 高于 finetune，说明抗 aliasing 处理对困难视角有帮助。2DGS 的平均 PSNR 为 27.18 dB，平面结构表达较稳定，但渲染指标略低。Depth RegularizedGS 的指标明显较低，原因包括稀疏 COLMAP 深度覆盖不足、深度权重噪声较大、反光表面深度不稳定，以及该方法更适合少视角正则化场景。该实验作为失败消融保留，说明深度正则需要更可靠的单目深度、尺度标定和 mask 处理。
+
+\subsection{几何精度}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\linewidth]{final_geometry_accuracy.png}
+\caption{几何精度结果}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{全局几何精度}
+\begin{tabular}{lrrrr}
+\toprule
+序列 & 平均误差 m & 中位误差 m & 20 cm 内比例 & 10 cm 内比例 \\
+\midrule
+Sequence 01 & 0.277 & 0.195 & 0.510 & 0.254 \\
+Sequence 02 & 0.740 & 0.256 & 0.433 & 0.235 \\
+Sequence 03 & 0.280 & 0.204 & 0.494 & 0.267 \\
+Sequence 04 & 0.246 & 0.155 & 0.602 & 0.327 \\
+Sequence 05 & 0.251 & 0.188 & 0.523 & 0.286 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Sequence 04 的全局中位误差为 15.5 cm，Sequence 05 为 18.8 cm，Sequence 01 为 19.5 cm。五个序列的中位误差平均约 20.0 cm。局部测量中，Sequence 04 的若干局部区域达到 10 cm 附近，最好局部中位误差为 7.95 cm。全局误差较高的序列主要受弱纹理平面、遮挡和反光区域影响。
+
+\section{失败案例分析}
+
+\subsection{白色弱纹理区域}
+
+白色柜面、白色墙面和大面积平滑区域缺少稳定梯度。COLMAP 的 SIFT 特征点主要依赖角点、边缘和纹理，弱纹理区域难以形成足够匹配。3DGS 的图像监督也主要通过像素误差和结构误差更新高斯参数，当局部颜色接近常数时，多个几何解释会产生相似渲染误差，因此模型容易生成模糊表面。
+
+\subsection{反光区域}
+
+反光区域不满足静态漫反射假设。相同物理表面在不同视角下会出现不同高光位置，3DGS 在静态颜色和不透明度参数下难以同时解释所有视角。训练结果中，反光区域常出现半透明高斯、局部漂浮点和边缘模糊。
+
+\subsection{黑色线条和高对比结构}
+
+黑色线条、门框、线缆、文字、地毯色块和柜体边缘恢复较稳定。这些区域具有高对比梯度，SIFT 能重复检测，COLMAP 能获得稳定匹配，3DGS 的边缘误差也更明确。该观察说明，室内重建质量与局部纹理梯度密切相关。
+
+\subsection{后续改进}
+
+可进一步加入反光 mask，减少高光区域对颜色和透明度的错误监督。可使用更可靠的单目深度估计并进行尺度标定，再引入深度正则。可加入线段监督和平面约束，使门框、墙面、柜体和地面满足更稳定的几何先验。可对大场景采用分区训练和局部拼接，降低一个模型同时解释所有复杂区域的难度。可继续使用 Mip Splatting 降低远近尺度变化带来的 aliasing。
+
+\section{可复现性}
+
+主要脚本位于 04\_code\_scripts 和 scripts 目录。流程包括数据准备、COLMAP、训练、渲染、指标计算、PLY 导出和几何评估。核心命令如下。
+
+\begin{verbatim}
+python scripts/prepare_stage2_sequence.py
+powershell scripts/run_stage2_colmap.ps1
+powershell scripts/run_stage2_training.ps1
+python scripts/export_stage2_supersplat_ply.py
+python scripts/evaluate_stage2_geometry.py
+python scripts/make_stage2_final_assets.py
+\end{verbatim}
+
+Mip Splatting、2DGS 和 DepthRegularizedGS 的官方仓库和本地补丁保留在 external 目录。训练日志和输出结果保留在 work 目录。最终报告、表格和图像均由这些脚本生成。
+
+\section{结论}
+
+本实验完成了共享室内场景的 3DGS 重建、渲染评估、几何精度评估、消融实验和进阶方法对比。最终五个序列平均 PSNR 均超过 25 dB，Sequence 04 达到 28.36 dB。几何精度中，多个序列的中位误差达到 20 cm 附近，局部区域达到 10 cm 附近。分区训练和低学习率 finetune 是最有效的改进策略。Mip Splatting 与 2DGS 均完成实跑并取得接近最终方案的结果。Depth RegularizedGS 完成配置、训练和评估，但在当前稀疏深度设置下效果较弱。
+
+主要不足在于反光和弱纹理区域仍然容易产生模糊和漂浮高斯。后续应优先加入反光 mask、可靠深度先验、线段监督、平面约束和更细粒度的分区训练。
+
+\begin{thebibliography}{9}
+
+\bibitem{kerbl2023}
+Kerbl B, Kopanas G, Leimkühler T, Drettakis G.
+3D Gaussian Splatting for Real Time Radiance Field Rendering.
+ACM Transactions on Graphics, SIGGRAPH, 2023.
+
+\bibitem{schonberger2016}
+Schönberger J L, Frahm J M.
+Structure from Motion Revisited.
+IEEE Conference on Computer Vision and Pattern Recognition, 2016.
+
+\bibitem{lowe2004}
+Lowe D G.
+Distinctive Image Features from Scale Invariant Keypoints.
+International Journal of Computer Vision, 2004.
+
+\bibitem{fischler1981}
+Fischler M A, Bolles R C.
+Random Sample Consensus.
+Communications of the ACM, 1981.
+
+\bibitem{triggs2000}
+Triggs B, McLauchlan P F, Hartley R I, Fitzgibbon A W.
+Bundle Adjustment A Modern Synthesis.
+Vision Algorithms Theory and Practice, 2000.
+
+\bibitem{wang2004}
+Wang Z, Bovik A C, Sheikh H R, Simoncelli E P.
+Image Quality Assessment From Error Visibility to Structural Similarity.
+IEEE Transactions on Image Processing, 2004.
+
+\bibitem{mipsplatting}
+Yu Z, Chen A, Huang B, Sattler T, Geiger A.
+Mip Splatting Alias Free 3D Gaussian Splatting.
+CVPR, 2024.
+
+\bibitem{twodgs}
+Huang B, Yu Z, Chen A, Geiger A, Gao S.
+2D Gaussian Splatting for Geometrically Accurate Radiance Fields.
+SIGGRAPH, 2024.
+
+\bibitem{drgs}
+Chung J, Oh J, Lee K M.
+Depth Regularized Optimization for 3D Gaussian Splatting in Few Shot Images.
+CVPR Workshop, 2024.
+
+\end{thebibliography}
+
+\end{document}

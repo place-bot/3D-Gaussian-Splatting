@@ -1,0 +1,11 @@
+{
+  "sequence": "Sequence_01",
+  "mode": "uniform",
+  "source_image_count": 391,
+  "selected_image_count": 240,
+  "target_count": 240,
+  "max_width": 1600,
+  "mean_laplacian_var": 430.2778532718469,
+  "mean_brightness": 138.47102822445058,
+  "mean_contrast": 57.064224023764076
+}

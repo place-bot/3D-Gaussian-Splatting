@@ -1,0 +1,13 @@
+{
+  "sequence": "Sequence_02",
+  "mode": "partition",
+  "source_image_count": 850,
+  "selected_image_count": 80,
+  "start_index": 481,
+  "end_index": 560,
+  "stride": 1,
+  "max_width": 1600,
+  "mean_laplacian_var": 204.53611077312075,
+  "mean_brightness": 132.8953675815053,
+  "mean_contrast": 54.045226946071374
+}

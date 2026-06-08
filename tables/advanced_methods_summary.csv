@@ -1,0 +1,5 @@
+method,sequence,variant,image_count,selected_image_count,mean_psnr,mean_ssim,min_psnr,max_psnr,gaussian_count,width,height,iterations,additional_iterations
+Controlled 3DGS finetune,Sequence_04,partition_best_finetune,80,24,28.355955619961513,0.8112708702683449,17.159041502257647,34.890175134204284,50663,570,768,24000,10000
+Mip Splatting official,Sequence_04,mip_splatting,80,,27.7669944838022,0.8110628083348275,21.264529076686934,33.728470144356464,,,,,
+2DGS official,Sequence_04,twodgs,80,,27.175557453125617,0.7958794020116329,20.5136296729657,33.1525488874646,,,,,
+Depth RegularizedGS,Sequence_04,depth_regularized_full,80,,15.920748416362397,0.6618721110746264,6.782950137916959,20.02494640536851,,,,,

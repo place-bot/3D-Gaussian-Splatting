@@ -1,0 +1,6 @@
+sequence,variant,input_images,registered_images,registration_rate,sparse_points
+Sequence_01,enhanced_long_finetune,187,187,1.0,41327
+Sequence_02,partition_mid_finetune,80,49,0.6125,13667
+Sequence_03,partition_best_finetune,120,120,1.0,54290
+Sequence_04,partition_best_finetune,80,80,1.0,40064
+Sequence_05,full_finetune,422,422,1.0,135204
