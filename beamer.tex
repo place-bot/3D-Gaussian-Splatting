@@ -93,13 +93,99 @@ T_i = \prod_{k<i}(1-\alpha_k)
 \[
 \mathcal{L} =
 (1-\lambda)\|\hat{\mathbf{I}}-\mathbf{I}\|_1
-\lambda(1-\mathrm{SSIM})
++ \lambda(1-\mathrm{SSIM})
 \]
 \begin{itemize}
 \item 可微渲染把图像误差反向传回三维高斯参数。
 \item 本实验加入低学习率 finetune、有限增密和边缘一致性约束。
 \end{itemize}
 \refline{Kerbl et al. 2023.}
+\end{frame}
+
+\begin{frame}{Mip Splatting：为什么需要它}
+\small
+普通 3DGS 在投影后使用固定的屏幕空间 dilation：
+\[
+G^{2D}(\mathbf{x}) =
+\exp\left(
+-\frac{1}{2}
+(\mathbf{x}-\boldsymbol{\mu})^T
+(\Sigma^{2D}+s\,\mathbf{I})^{-1}
+(\mathbf{x}-\boldsymbol{\mu})
+\right)
+\]
+\begin{itemize}
+\item 固定 \(s\mathbf{I}\) 只在训练采样率附近近似合理。
+\item 视角拉远或焦距变小，dilation 会把能量铺到过大的像素区域，产生变亮和膨胀。
+\item 视角拉近或焦距变大，训练得到的过小三维高斯会暴露为高频伪影和边缘侵蚀。
+\item Mip Splatting 的核心是先限制三维表示频率，再用二维 Mip filter 模拟像素面积积分。
+\end{itemize}
+\refline{Yu et al. 2024.}
+\end{frame}
+
+\begin{frame}{Mip Splatting：三维平滑滤波}
+\scriptsize
+对第 \(k\) 个高斯，先用训练相机估计它在三维空间的最高可恢复采样率。若该高斯到第 \(n\) 个可见相机的深度为 \(d_{n,k}\)，焦距为 \(f_n\)，则
+\[
+\hat{T}_{n,k}=\frac{d_{n,k}}{f_n},
+\quad
+\hat{\nu}_k =
+\max_{n}
+\left(
+\mathbf{1}_{n}(\boldsymbol{\mu}_k)
+\frac{f_n}{d_{n,k}}
+\right)
+\]
+\[
+G^{reg}_k(\mathbf{x})
+=
+(G_k \otimes G_{low})(\mathbf{x}),
+\quad
+\Sigma^{reg}_k =
+\Sigma_k+\frac{s_3}{\hat{\nu}_k^2}\mathbf{I}
+\]
+\[
+\alpha^{reg}_k =
+\alpha_k
+\sqrt{
+\frac{|\Sigma_k|}
+{|\Sigma_k+\frac{s_3}{\hat{\nu}_k^2}\mathbf{I}|}
+}
+\]
+\begin{itemize}
+\item \(\hat{\nu}_k\) 取所有可见训练视角中的最大采样率，等价于使用最细的可靠观察尺度。
+\item 与高斯低通卷积只需把协方差相加，代价低，可在训练中周期性更新。
+\item 行列式系数补偿体积变化，避免平滑后 opacity 人为变亮。
+\end{itemize}
+\refline{Yu et al. 2024.}
+\end{frame}
+
+\begin{frame}{Mip Splatting：二维 Mip 滤波}
+\scriptsize
+三维滤波解决重建本身的过高频率；渲染到低采样率视角时，还需要在图像平面模拟一个像素面积内的积分。
+\[
+\Sigma^{2D}_k =
+J_k R \Sigma^{reg}_k R^T J_k^T
+\]
+\[
+G^{2D,mip}_k(\mathbf{x}) =
+\sqrt{
+\frac{|\Sigma^{2D}_k|}
+{|\Sigma^{2D}_k+s_2\mathbf{I}|}
+}
+\exp\left(
+-\frac{1}{2}
+(\mathbf{x}-\boldsymbol{\mu}^{2D}_k)^T
+(\Sigma^{2D}_k+s_2\mathbf{I})^{-1}
+(\mathbf{x}-\boldsymbol{\mu}^{2D}_k)
+\right)
+\]
+\begin{itemize}
+\item 普通 dilation 只放大 footprint，不降低峰值；Mip filter 同时放大协方差并衰减峰值。
+\item \(s_2\mathbf{I}\) 近似一个像素的 box filter，使单像素内能量守恒，更符合成像过程。
+\item 本实验在 Sequence 04 上训练 Mip Splatting 12000 次，达到 PSNR 27.77、SSIM 0.811，接近最终 3DGS finetune。
+\end{itemize}
+\refline{Yu et al. 2024.}
 \end{frame}
 
 \begin{frame}{PSNR 和 SSIM}
