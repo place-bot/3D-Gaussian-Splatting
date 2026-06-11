@@ -87,3 +87,9 @@ docs/COLLABORATION.md
 ## Notes for Collaborators
 
 The strongest immediate optimization targets are Sequence 01 low PSNR tail, Sequence 03 weak texture regions, Sequence 04 reflective wall and cabinet regions, and Sequence 05 large scale floating Gaussian artifacts. The report explains the observation that black high contrast lines are reconstructed more reliably than white reflective surfaces. This is consistent with the feature extraction and photometric optimization mechanisms used by COLMAP and 3DGS.
+
+## Progress After the June 9 Evening Presentation
+
+After the presentation on the evening of June 9, 2026, the next stage of work should focus on more recent papers related to edge detection, edge reconstruction, line feature supervision, and line aware 3D reconstruction. The concrete motivation is to improve the reconstruction of thin black structures on the floor and in the room, for example the black line on the ground that is visually important but easy to blur in the current 3DGS results.
+
+Depth RegularizedGS has been configured and trained in the current repository, but the current run should be treated as a failed ablation because sparse depth fallback did not improve the reconstruction quality. Future work can either discard this direction and focus on edge based or line based reconstruction, or rerun Depth RegularizedGS with a cleaner dense monocular depth pipeline and valid depth masks.
