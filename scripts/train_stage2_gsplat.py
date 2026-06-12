@@ -52,6 +52,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lambda-edge", type=float, default=0.0)
     parser.add_argument("--lambda-opacity", type=float, default=0.0)
     parser.add_argument("--resume-checkpoint", type=Path, default=None)
+    parser.add_argument("--allow-resume-resolution-mismatch", action="store_true")
     parser.add_argument("--lr-scale", type=float, default=1.0)
     return parser.parse_args()
 
@@ -390,8 +391,27 @@ def main() -> None:
     base_iterations = 0
     if args.resume_checkpoint is not None:
         checkpoint = torch.load(args.resume_checkpoint, map_location="cpu")
-        if int(checkpoint.get("width", width)) != width or int(checkpoint.get("height", height)) != height:
+        checkpoint_width = int(checkpoint.get("width", width))
+        checkpoint_height = int(checkpoint.get("height", height))
+        if (
+            not args.allow_resume_resolution_mismatch
+            and (checkpoint_width != width or checkpoint_height != height)
+        ):
             raise ValueError("Resume checkpoint resolution does not match current training resolution")
+        if checkpoint_width != width or checkpoint_height != height:
+            print(
+                json.dumps(
+                    {
+                        "warning": "resume checkpoint resolution differs from current training resolution",
+                        "checkpoint_width": checkpoint_width,
+                        "checkpoint_height": checkpoint_height,
+                        "current_width": width,
+                        "current_height": height,
+                    },
+                    ensure_ascii=False,
+                ),
+                flush=True,
+            )
         means = torch.nn.Parameter(checkpoint["means"].to(device))
         log_scales = torch.nn.Parameter(checkpoint["log_scales"].to(device))
         quats = torch.nn.Parameter(checkpoint["quats"].to(device))
