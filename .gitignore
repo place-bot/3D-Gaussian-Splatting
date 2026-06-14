@@ -23,6 +23,7 @@ speech_stage2.md
 
 # COLMAP databases and bulky generated cache
 *.db
+work/
 work/**/colmap/database.db
 work/**/colmap/dense/
 work/**/colmap/stereo/
