@@ -1,0 +1,71 @@
+{
+  "experiment": "it30000_r1_k0p2_dssim0p1_du15000_dg0p0002",
+  "sequence": "Sequence_04",
+  "method": "Mip-Splatting",
+  "parameters": {
+    "iterations": 30000,
+    "resolution": 1,
+    "kernel_size": 0.2,
+    "lambda_dssim": 0.1,
+    "densify_until_iter": 15000,
+    "densify_grad_threshold": 0.0002
+  },
+  "metrics": {
+    "image_count": 80,
+    "mean_psnr": 33.139931476668465,
+    "mean_ssim": 0.9266461230814457,
+    "min_psnr": 24.026595450970888,
+    "max_psnr": 38.55431772684621
+  },
+  "selected_frames": [
+    {
+      "index": "32",
+      "name": "00032.png",
+      "psnr": "24.026595450970888",
+      "ssim": "0.7725238800048828"
+    },
+    {
+      "index": "33",
+      "name": "00033.png",
+      "psnr": "24.131309363588276",
+      "ssim": "0.814190685749054"
+    },
+    {
+      "index": "1",
+      "name": "00001.png",
+      "psnr": "25.413520209564346",
+      "ssim": "0.8564839363098145"
+    },
+    {
+      "index": "35",
+      "name": "00035.png",
+      "psnr": "31.146021309673365",
+      "ssim": "0.9063617587089539"
+    },
+    {
+      "index": "4",
+      "name": "00004.png",
+      "psnr": "33.72581175486788",
+      "ssim": "0.9277722835540771"
+    },
+    {
+      "index": "52",
+      "name": "00052.png",
+      "psnr": "35.79152616660816",
+      "ssim": "0.9684793949127197"
+    },
+    {
+      "index": "65",
+      "name": "00065.png",
+      "psnr": "38.15895715036564",
+      "ssim": "0.9564937949180603"
+    },
+    {
+      "index": "20",
+      "name": "00020.png",
+      "psnr": "38.55431772684621",
+      "ssim": "0.9601522088050842"
+    }
+  ],
+  "comparison_image": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\mip_best_comparisons_large.jpg"
+}

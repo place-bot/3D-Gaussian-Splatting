@@ -43,6 +43,10 @@ Useful environment variables:
   RESOLUTION=1
   RANK_BY=mean_ssim       # or mean_psnr
   OVERWRITE=1             # rerun existing experiments
+  KERNEL_SIZES="0.05 0.1 0.2"
+  LAMBDA_DSSIMS="0.1 0.2 0.3"
+  DENSIFY_UNTILS="15000 20000"
+  DENSIFY_GRADS="0.0001 0.00015 0.0002"
 USAGE
 }
 
@@ -263,8 +267,10 @@ run_coarse() {
   local iterations="${COARSE_ITERATIONS:-30000}"
   local densify_until="${COARSE_DENSIFY_UNTIL:-20000}"
   local densify_grad="${COARSE_DENSIFY_GRAD:-0.00015}"
-  for kernel_size in 0.05 0.1 0.2; do
-    for lambda_dssim in 0.1 0.2 0.3; do
+  local kernel_sizes="${KERNEL_SIZES:-0.05 0.1 0.2}"
+  local lambda_dssims="${LAMBDA_DSSIMS:-0.1 0.2 0.3}"
+  for kernel_size in ${kernel_sizes}; do
+    for lambda_dssim in ${lambda_dssims}; do
       run_one "${iterations}" "${kernel_size}" "${lambda_dssim}" "${densify_until}" "${densify_grad}"
     done
   done
@@ -281,8 +287,10 @@ run_densify() {
   source "${best_env}"
   echo "Running densify sweep from best coarse: ${BEST_EXPERIMENT}"
   local iterations="${DENSIFY_ITERATIONS:-30000}"
-  for densify_until in 15000 20000; do
-    for densify_grad in 0.0001 0.00015 0.0002; do
+  local densify_untils="${DENSIFY_UNTILS:-15000 20000}"
+  local densify_grads="${DENSIFY_GRADS:-0.0001 0.00015 0.0002}"
+  for densify_until in ${densify_untils}; do
+    for densify_grad in ${densify_grads}; do
       run_one "${iterations}" "${BEST_KERNEL_SIZE}" "${BEST_LAMBDA_DSSIM}" "${densify_until}" "${densify_grad}"
     done
   done

@@ -1,0 +1,821 @@
+{
+  "Sequence_01": {
+    "baseline": {
+      "method": "Controlled 3DGS finetune",
+      "variant": "enhanced_long_finetune",
+      "metrics": {
+        "image_count": 187,
+        "selected_image_count": 24,
+        "mean_psnr": 26.36145235534408,
+        "mean_ssim": 0.8359903466892752,
+        "min_psnr": 15.079632196733197,
+        "max_psnr": 31.90757141255835,
+        "gaussian_count": 69507,
+        "width": 570,
+        "height": 768,
+        "iterations": 28000,
+        "additional_iterations": 10000
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\Sequence_01\\enhanced_long_finetune\\output\\renders"
+    },
+    "mip": {
+      "method": "Mip-Splatting",
+      "experiment": "it30000_r1_k0p2_dssim0p1_du15000_dg0p0002",
+      "parameters": {
+        "iterations": 30000,
+        "resolution": 1,
+        "kernel_size": 0.2,
+        "lambda_dssim": 0.1,
+        "densify_until_iter": 15000,
+        "densify_grad_threshold": 0.0002
+      },
+      "metrics": {
+        "image_count": 187,
+        "mean_psnr": 31.25676081984074,
+        "mean_ssim": 0.9365887128733059,
+        "min_psnr": 23.435683033910884,
+        "max_psnr": 39.08264291154619
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\MIP\\sequence01\\it30000_r1_k0p2_dssim0p1_du15000_dg0p0002\\output\\train\\ours_30000\\test_preds_1"
+    },
+    "comparison_outputs": {
+      "large_first4": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_01_gt_baseline_mip_comparisons_large.jpg",
+      "all24": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_01_gt_baseline_mip_comparisons_all24.jpg"
+    },
+    "frame_mapping": "baseline render_XXXX.jpg uses one-based frame index; Mip-Splatting uses zero-based XXXXX.png.",
+    "large_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "23.87031851248505",
+        "baseline_ssim": "0.7916433811187744",
+        "mip_psnr": "25.85315280387915",
+        "mip_ssim": "0.8752025961875916"
+      },
+      {
+        "frame_id_one_based": 9,
+        "mip_name_zero_based": "00008.png",
+        "baseline_psnr": "25.18755175713086",
+        "baseline_ssim": "0.8472122550010681",
+        "mip_psnr": "30.55481906203618",
+        "mip_ssim": "0.9561044573783875"
+      },
+      {
+        "frame_id_one_based": 17,
+        "mip_name_zero_based": "00016.png",
+        "baseline_psnr": "25.376177682250667",
+        "baseline_ssim": "0.8118321895599365",
+        "mip_psnr": "26.260591858356488",
+        "mip_ssim": "0.8690430521965027"
+      },
+      {
+        "frame_id_one_based": 25,
+        "mip_name_zero_based": "00024.png",
+        "baseline_psnr": "26.518316923039258",
+        "baseline_ssim": "0.8237372040748596",
+        "mip_psnr": "30.454581823225798",
+        "mip_ssim": "0.9213598370552063"
+      }
+    ],
+    "all_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "23.87031851248505",
+        "baseline_ssim": "0.7916433811187744",
+        "mip_psnr": "25.85315280387915",
+        "mip_ssim": "0.8752025961875916"
+      },
+      {
+        "frame_id_one_based": 9,
+        "mip_name_zero_based": "00008.png",
+        "baseline_psnr": "25.18755175713086",
+        "baseline_ssim": "0.8472122550010681",
+        "mip_psnr": "30.55481906203618",
+        "mip_ssim": "0.9561044573783875"
+      },
+      {
+        "frame_id_one_based": 17,
+        "mip_name_zero_based": "00016.png",
+        "baseline_psnr": "25.376177682250667",
+        "baseline_ssim": "0.8118321895599365",
+        "mip_psnr": "26.260591858356488",
+        "mip_ssim": "0.8690430521965027"
+      },
+      {
+        "frame_id_one_based": 25,
+        "mip_name_zero_based": "00024.png",
+        "baseline_psnr": "26.518316923039258",
+        "baseline_ssim": "0.8237372040748596",
+        "mip_psnr": "30.454581823225798",
+        "mip_ssim": "0.9213598370552063"
+      },
+      {
+        "frame_id_one_based": 33,
+        "mip_name_zero_based": "00032.png",
+        "baseline_psnr": "26.891019859825573",
+        "baseline_ssim": "0.8360235095024109",
+        "mip_psnr": "28.53018235837787",
+        "mip_ssim": "0.9248511791229248"
+      },
+      {
+        "frame_id_one_based": 41,
+        "mip_name_zero_based": "00040.png",
+        "baseline_psnr": "26.65248961563669",
+        "baseline_ssim": "0.8800373077392578",
+        "mip_psnr": "29.492639836235966",
+        "mip_ssim": "0.9372236132621765"
+      },
+      {
+        "frame_id_one_based": 49,
+        "mip_name_zero_based": "00048.png",
+        "baseline_psnr": "23.111073900140624",
+        "baseline_ssim": "0.8551123142242432",
+        "mip_psnr": "35.911372400264405",
+        "mip_ssim": "0.9640354514122009"
+      },
+      {
+        "frame_id_one_based": 57,
+        "mip_name_zero_based": "00056.png",
+        "baseline_psnr": "21.210001246074984",
+        "baseline_ssim": "0.6466173529624939",
+        "mip_psnr": "28.536405195262432",
+        "mip_ssim": "0.8865346908569336"
+      },
+      {
+        "frame_id_one_based": 65,
+        "mip_name_zero_based": "00064.png",
+        "baseline_psnr": "27.813459953693396",
+        "baseline_ssim": "0.8732776641845703",
+        "mip_psnr": "30.57053887662395",
+        "mip_ssim": "0.9198234677314758"
+      },
+      {
+        "frame_id_one_based": 73,
+        "mip_name_zero_based": "00072.png",
+        "baseline_psnr": "24.95366004474124",
+        "baseline_ssim": "0.7671645283699036",
+        "mip_psnr": "27.954786211289246",
+        "mip_ssim": "0.9025239944458008"
+      },
+      {
+        "frame_id_one_based": 81,
+        "mip_name_zero_based": "00080.png",
+        "baseline_psnr": "22.649807928106718",
+        "baseline_ssim": "0.7472606301307678",
+        "mip_psnr": "26.52690900903696",
+        "mip_ssim": "0.8495402932167053"
+      },
+      {
+        "frame_id_one_based": 89,
+        "mip_name_zero_based": "00088.png",
+        "baseline_psnr": "25.51662935965939",
+        "baseline_ssim": "0.8127550482749939",
+        "mip_psnr": "30.045459472096603",
+        "mip_ssim": "0.9131566882133484"
+      },
+      {
+        "frame_id_one_based": 98,
+        "mip_name_zero_based": "00097.png",
+        "baseline_psnr": "29.083706751847984",
+        "baseline_ssim": "0.9007931351661682",
+        "mip_psnr": "35.48931175182581",
+        "mip_ssim": "0.963956356048584"
+      },
+      {
+        "frame_id_one_based": 106,
+        "mip_name_zero_based": "00105.png",
+        "baseline_psnr": "27.143455603828098",
+        "baseline_ssim": "0.8707213401794434",
+        "mip_psnr": "32.858490491642115",
+        "mip_ssim": "0.9509475827217102"
+      },
+      {
+        "frame_id_one_based": 114,
+        "mip_name_zero_based": "00113.png",
+        "baseline_psnr": "25.879787793733637",
+        "baseline_ssim": "0.8754996657371521",
+        "mip_psnr": "31.974544822932394",
+        "mip_ssim": "0.9355683326721191"
+      },
+      {
+        "frame_id_one_based": 122,
+        "mip_name_zero_based": "00121.png",
+        "baseline_psnr": "28.414128197574446",
+        "baseline_ssim": "0.8518519401550293",
+        "mip_psnr": "33.20313806546124",
+        "mip_ssim": "0.9390203952789307"
+      },
+      {
+        "frame_id_one_based": 130,
+        "mip_name_zero_based": "00129.png",
+        "baseline_psnr": "23.392741702362272",
+        "baseline_ssim": "0.7992761731147766",
+        "mip_psnr": "28.48714017108967",
+        "mip_ssim": "0.9403602480888367"
+      },
+      {
+        "frame_id_one_based": 138,
+        "mip_name_zero_based": "00137.png",
+        "baseline_psnr": "25.464583384161294",
+        "baseline_ssim": "0.8522599339485168",
+        "mip_psnr": "27.97686095400897",
+        "mip_ssim": "0.9132296442985535"
+      },
+      {
+        "frame_id_one_based": 146,
+        "mip_name_zero_based": "00145.png",
+        "baseline_psnr": "26.8914819866233",
+        "baseline_ssim": "0.8775017857551575",
+        "mip_psnr": "32.43742329328909",
+        "mip_ssim": "0.9567417502403259"
+      },
+      {
+        "frame_id_one_based": 154,
+        "mip_name_zero_based": "00153.png",
+        "baseline_psnr": "15.922901592938244",
+        "baseline_ssim": "0.6518598198890686",
+        "mip_psnr": "26.513046320607696",
+        "mip_ssim": "0.8755090236663818"
+      },
+      {
+        "frame_id_one_based": 162,
+        "mip_name_zero_based": "00161.png",
+        "baseline_psnr": "28.362852911187634",
+        "baseline_ssim": "0.8807501792907715",
+        "mip_psnr": "36.37769964453005",
+        "mip_ssim": "0.9684605598449707"
+      },
+      {
+        "frame_id_one_based": 170,
+        "mip_name_zero_based": "00169.png",
+        "baseline_psnr": "29.661395241963003",
+        "baseline_ssim": "0.9159555435180664",
+        "mip_psnr": "37.11363699799819",
+        "mip_ssim": "0.9786767959594727"
+      },
+      {
+        "frame_id_one_based": 178,
+        "mip_name_zero_based": "00177.png",
+        "baseline_psnr": "30.60809653159066",
+        "baseline_ssim": "0.9066122174263",
+        "mip_psnr": "36.713179976120585",
+        "mip_ssim": "0.967739999294281"
+      },
+      {
+        "frame_id_one_based": 187,
+        "mip_name_zero_based": "00186.png",
+        "baseline_psnr": "19.652817313515115",
+        "baseline_ssim": "0.6535599827766418",
+        "mip_psnr": "23.435683033910884",
+        "mip_ssim": "0.8356540203094482"
+      }
+    ]
+  },
+  "Sequence_02": {
+    "baseline": {
+      "method": "Controlled 3DGS finetune",
+      "variant": "partition_mid_finetune",
+      "metrics": {
+        "image_count": 49,
+        "selected_image_count": 24,
+        "mean_psnr": 30.14937202933866,
+        "mean_ssim": 0.8844809082089639,
+        "min_psnr": 25.038992819007934,
+        "max_psnr": 34.937448795956456,
+        "gaussian_count": 20718,
+        "width": 713,
+        "height": 960,
+        "iterations": 24000,
+        "additional_iterations": 10000
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\Sequence_02\\partition_mid_finetune\\output\\renders"
+    },
+    "mip": {
+      "method": "Mip-Splatting",
+      "experiment": "it30000_r1_k0p2_dssim0p1_du15000_dg0p0002",
+      "parameters": {
+        "iterations": 30000,
+        "resolution": 1,
+        "kernel_size": 0.2,
+        "lambda_dssim": 0.1,
+        "densify_until_iter": 15000,
+        "densify_grad_threshold": 0.0002
+      },
+      "metrics": {
+        "image_count": 49,
+        "mean_psnr": 39.82201329136549,
+        "mean_ssim": 0.9722734263965062,
+        "min_psnr": 34.90479079295732,
+        "max_psnr": 45.33706431771148
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\MIP\\sequence02\\it30000_r1_k0p2_dssim0p1_du15000_dg0p0002\\output\\train\\ours_30000\\test_preds_1"
+    },
+    "comparison_outputs": {
+      "large_first4": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_02_gt_baseline_mip_comparisons_large.jpg",
+      "all24": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_02_gt_baseline_mip_comparisons_all24.jpg"
+    },
+    "frame_mapping": "baseline render_XXXX.jpg uses one-based frame index; Mip-Splatting uses zero-based XXXXX.png.",
+    "large_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "25.038992819007934",
+        "baseline_ssim": "0.8131949305534363",
+        "mip_psnr": "45.33706431771148",
+        "mip_ssim": "0.9870579838752747"
+      },
+      {
+        "frame_id_one_based": 3,
+        "mip_name_zero_based": "00002.png",
+        "baseline_psnr": "28.014440628585326",
+        "baseline_ssim": "0.8646535873413086",
+        "mip_psnr": "34.90479079295732",
+        "mip_ssim": "0.971140444278717"
+      },
+      {
+        "frame_id_one_based": 5,
+        "mip_name_zero_based": "00004.png",
+        "baseline_psnr": "29.2536094602437",
+        "baseline_ssim": "0.8861247897148132",
+        "mip_psnr": "36.621263620201",
+        "mip_ssim": "0.9701583981513977"
+      },
+      {
+        "frame_id_one_based": 7,
+        "mip_name_zero_based": "00006.png",
+        "baseline_psnr": "29.040098006060376",
+        "baseline_ssim": "0.8535879254341125",
+        "mip_psnr": "38.07242769544017",
+        "mip_ssim": "0.9584681987762451"
+      }
+    ],
+    "all_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "25.038992819007934",
+        "baseline_ssim": "0.8131949305534363",
+        "mip_psnr": "45.33706431771148",
+        "mip_ssim": "0.9870579838752747"
+      },
+      {
+        "frame_id_one_based": 3,
+        "mip_name_zero_based": "00002.png",
+        "baseline_psnr": "28.014440628585326",
+        "baseline_ssim": "0.8646535873413086",
+        "mip_psnr": "34.90479079295732",
+        "mip_ssim": "0.971140444278717"
+      },
+      {
+        "frame_id_one_based": 5,
+        "mip_name_zero_based": "00004.png",
+        "baseline_psnr": "29.2536094602437",
+        "baseline_ssim": "0.8861247897148132",
+        "mip_psnr": "36.621263620201",
+        "mip_ssim": "0.9701583981513977"
+      },
+      {
+        "frame_id_one_based": 7,
+        "mip_name_zero_based": "00006.png",
+        "baseline_psnr": "29.040098006060376",
+        "baseline_ssim": "0.8535879254341125",
+        "mip_psnr": "38.07242769544017",
+        "mip_ssim": "0.9584681987762451"
+      },
+      {
+        "frame_id_one_based": 9,
+        "mip_name_zero_based": "00008.png",
+        "baseline_psnr": "29.681954168762864",
+        "baseline_ssim": "0.822496235370636",
+        "mip_psnr": "39.933894596498966",
+        "mip_ssim": "0.9540109038352966"
+      },
+      {
+        "frame_id_one_based": 11,
+        "mip_name_zero_based": "00010.png",
+        "baseline_psnr": "28.01017209641207",
+        "baseline_ssim": "0.8418450355529785",
+        "mip_psnr": "39.35377198428671",
+        "mip_ssim": "0.9649653434753418"
+      },
+      {
+        "frame_id_one_based": 13,
+        "mip_name_zero_based": "00012.png",
+        "baseline_psnr": "31.115318977141616",
+        "baseline_ssim": "0.9061431884765625",
+        "mip_psnr": "39.91031119851047",
+        "mip_ssim": "0.9715295433998108"
+      },
+      {
+        "frame_id_one_based": 15,
+        "mip_name_zero_based": "00014.png",
+        "baseline_psnr": "30.34747120564445",
+        "baseline_ssim": "0.8656246662139893",
+        "mip_psnr": "39.7686597343959",
+        "mip_ssim": "0.9655423164367676"
+      },
+      {
+        "frame_id_one_based": 17,
+        "mip_name_zero_based": "00016.png",
+        "baseline_psnr": "29.04122293085047",
+        "baseline_ssim": "0.8729205131530762",
+        "mip_psnr": "41.06023556757522",
+        "mip_ssim": "0.9728520512580872"
+      },
+      {
+        "frame_id_one_based": 19,
+        "mip_name_zero_based": "00018.png",
+        "baseline_psnr": "28.90860902890346",
+        "baseline_ssim": "0.8716999888420105",
+        "mip_psnr": "40.88923886075453",
+        "mip_ssim": "0.9757289886474609"
+      },
+      {
+        "frame_id_one_based": 21,
+        "mip_name_zero_based": "00020.png",
+        "baseline_psnr": "28.83531099498604",
+        "baseline_ssim": "0.865039587020874",
+        "mip_psnr": "38.17342561719443",
+        "mip_ssim": "0.9686851501464844"
+      },
+      {
+        "frame_id_one_based": 23,
+        "mip_name_zero_based": "00022.png",
+        "baseline_psnr": "28.898365474791376",
+        "baseline_ssim": "0.878150224685669",
+        "mip_psnr": "39.40584160373283",
+        "mip_ssim": "0.9776427745819092"
+      },
+      {
+        "frame_id_one_based": 26,
+        "mip_name_zero_based": "00025.png",
+        "baseline_psnr": "29.86005919870277",
+        "baseline_ssim": "0.8740720748901367",
+        "mip_psnr": "38.86070404483098",
+        "mip_ssim": "0.9687852263450623"
+      },
+      {
+        "frame_id_one_based": 28,
+        "mip_name_zero_based": "00027.png",
+        "baseline_psnr": "31.09328647297591",
+        "baseline_ssim": "0.9139071106910706",
+        "mip_psnr": "40.58414837615854",
+        "mip_ssim": "0.978570282459259"
+      },
+      {
+        "frame_id_one_based": 30,
+        "mip_name_zero_based": "00029.png",
+        "baseline_psnr": "34.6365310228365",
+        "baseline_ssim": "0.9373145699501038",
+        "mip_psnr": "41.195455992883225",
+        "mip_ssim": "0.9798288345336914"
+      },
+      {
+        "frame_id_one_based": 32,
+        "mip_name_zero_based": "00031.png",
+        "baseline_psnr": "32.631832630914914",
+        "baseline_ssim": "0.9068174362182617",
+        "mip_psnr": "41.5019950896982",
+        "mip_ssim": "0.9719087481498718"
+      },
+      {
+        "frame_id_one_based": 34,
+        "mip_name_zero_based": "00033.png",
+        "baseline_psnr": "31.21927916753359",
+        "baseline_ssim": "0.8812652230262756",
+        "mip_psnr": "40.318299499611605",
+        "mip_ssim": "0.9635607600212097"
+      },
+      {
+        "frame_id_one_based": 36,
+        "mip_name_zero_based": "00035.png",
+        "baseline_psnr": "31.74830396441522",
+        "baseline_ssim": "0.8936293721199036",
+        "mip_psnr": "41.532578043794416",
+        "mip_ssim": "0.9738327860832214"
+      },
+      {
+        "frame_id_one_based": 38,
+        "mip_name_zero_based": "00037.png",
+        "baseline_psnr": "32.56004111000512",
+        "baseline_ssim": "0.9118144512176514",
+        "mip_psnr": "42.42720640446776",
+        "mip_ssim": "0.9781413674354553"
+      },
+      {
+        "frame_id_one_based": 40,
+        "mip_name_zero_based": "00039.png",
+        "baseline_psnr": "32.15990221873796",
+        "baseline_ssim": "0.9099969863891602",
+        "mip_psnr": "40.77209891608251",
+        "mip_ssim": "0.9748156070709229"
+      },
+      {
+        "frame_id_one_based": 42,
+        "mip_name_zero_based": "00041.png",
+        "baseline_psnr": "31.85556406552458",
+        "baseline_ssim": "0.9173104763031006",
+        "mip_psnr": "41.15953059512848",
+        "mip_ssim": "0.976107120513916"
+      },
+      {
+        "frame_id_one_based": 44,
+        "mip_name_zero_based": "00043.png",
+        "baseline_psnr": "31.386510991752537",
+        "baseline_ssim": "0.9117003083229065",
+        "mip_psnr": "40.6790290823238",
+        "mip_ssim": "0.9767155051231384"
+      },
+      {
+        "frame_id_one_based": 46,
+        "mip_name_zero_based": "00045.png",
+        "baseline_psnr": "29.073784019071496",
+        "baseline_ssim": "0.8979105353355408",
+        "mip_psnr": "36.187620130993785",
+        "mip_ssim": "0.9715479016304016"
+      },
+      {
+        "frame_id_one_based": 49,
+        "mip_name_zero_based": "00048.png",
+        "baseline_psnr": "26.391787130714974",
+        "baseline_ssim": "0.8692717552185059",
+        "mip_psnr": "38.57577222757496",
+        "mip_ssim": "0.9752327799797058"
+      }
+    ]
+  },
+  "Sequence_03": {
+    "baseline": {
+      "method": "Controlled 3DGS finetune",
+      "variant": "partition_best_finetune",
+      "metrics": {
+        "image_count": 120,
+        "selected_image_count": 24,
+        "mean_psnr": 26.326794332473472,
+        "mean_ssim": 0.8127632508675258,
+        "min_psnr": 21.38226148779593,
+        "max_psnr": 31.880921700116485,
+        "gaussian_count": 64675,
+        "width": 570,
+        "height": 768,
+        "iterations": 24000,
+        "additional_iterations": 10000
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\Sequence_03\\partition_best_finetune\\output\\renders"
+    },
+    "mip": {
+      "method": "Mip-Splatting",
+      "experiment": "it30000_r1_k0p15_dssim0p1_du17000_dg0p0002",
+      "parameters": {
+        "iterations": 30000,
+        "resolution": 1,
+        "kernel_size": 0.15,
+        "lambda_dssim": 0.1,
+        "densify_until_iter": 17000,
+        "densify_grad_threshold": 0.0002
+      },
+      "metrics": {
+        "image_count": 120,
+        "mean_psnr": 31.850523529648548,
+        "mean_ssim": 0.9255238195260366,
+        "min_psnr": 26.081726319048016,
+        "max_psnr": 35.58441003285245
+      },
+      "render_dir": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\work\\MIP\\sequence03\\it30000_r1_k0p15_dssim0p1_du17000_dg0p0002\\output\\train\\ours_30000\\test_preds_1"
+    },
+    "comparison_outputs": {
+      "large_first4": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_03_gt_baseline_mip_comparisons_large.jpg",
+      "all24": "D:\\Hogwarts\\Project\\3D-Gaussian-Splatting\\figures\\mip_best\\sequence_03_gt_baseline_mip_comparisons_all24.jpg"
+    },
+    "frame_mapping": "baseline render_XXXX.jpg uses one-based frame index; Mip-Splatting uses zero-based XXXXX.png.",
+    "large_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "27.12324218387962",
+        "baseline_ssim": "0.8528700470924377",
+        "mip_psnr": "30.272919590499413",
+        "mip_ssim": "0.9560703635215759"
+      },
+      {
+        "frame_id_one_based": 6,
+        "mip_name_zero_based": "00005.png",
+        "baseline_psnr": "25.967529713831613",
+        "baseline_ssim": "0.7949915528297424",
+        "mip_psnr": "30.568025203862838",
+        "mip_ssim": "0.9362843036651611"
+      },
+      {
+        "frame_id_one_based": 11,
+        "mip_name_zero_based": "00010.png",
+        "baseline_psnr": "23.89029473038432",
+        "baseline_ssim": "0.729027271270752",
+        "mip_psnr": "28.45363912233732",
+        "mip_ssim": "0.8403782248497009"
+      },
+      {
+        "frame_id_one_based": 16,
+        "mip_name_zero_based": "00015.png",
+        "baseline_psnr": "25.588067011683613",
+        "baseline_ssim": "0.7350031733512878",
+        "mip_psnr": "29.342825397051104",
+        "mip_ssim": "0.8496465682983398"
+      }
+    ],
+    "all_rows": [
+      {
+        "frame_id_one_based": 1,
+        "mip_name_zero_based": "00000.png",
+        "baseline_psnr": "27.12324218387962",
+        "baseline_ssim": "0.8528700470924377",
+        "mip_psnr": "30.272919590499413",
+        "mip_ssim": "0.9560703635215759"
+      },
+      {
+        "frame_id_one_based": 6,
+        "mip_name_zero_based": "00005.png",
+        "baseline_psnr": "25.967529713831613",
+        "baseline_ssim": "0.7949915528297424",
+        "mip_psnr": "30.568025203862838",
+        "mip_ssim": "0.9362843036651611"
+      },
+      {
+        "frame_id_one_based": 11,
+        "mip_name_zero_based": "00010.png",
+        "baseline_psnr": "23.89029473038432",
+        "baseline_ssim": "0.729027271270752",
+        "mip_psnr": "28.45363912233732",
+        "mip_ssim": "0.8403782248497009"
+      },
+      {
+        "frame_id_one_based": 16,
+        "mip_name_zero_based": "00015.png",
+        "baseline_psnr": "25.588067011683613",
+        "baseline_ssim": "0.7350031733512878",
+        "mip_psnr": "29.342825397051104",
+        "mip_ssim": "0.8496465682983398"
+      },
+      {
+        "frame_id_one_based": 21,
+        "mip_name_zero_based": "00020.png",
+        "baseline_psnr": "24.26959145869066",
+        "baseline_ssim": "0.7737894058227539",
+        "mip_psnr": "31.141751639563807",
+        "mip_ssim": "0.953747570514679"
+      },
+      {
+        "frame_id_one_based": 26,
+        "mip_name_zero_based": "00025.png",
+        "baseline_psnr": "27.427668370177592",
+        "baseline_ssim": "0.8746817111968994",
+        "mip_psnr": "32.864654706745696",
+        "mip_ssim": "0.9353023171424866"
+      },
+      {
+        "frame_id_one_based": 32,
+        "mip_name_zero_based": "00031.png",
+        "baseline_psnr": "31.880921700116485",
+        "baseline_ssim": "0.9290971755981445",
+        "mip_psnr": "34.434954108773695",
+        "mip_ssim": "0.9556198716163635"
+      },
+      {
+        "frame_id_one_based": 37,
+        "mip_name_zero_based": "00036.png",
+        "baseline_psnr": "29.016404582701774",
+        "baseline_ssim": "0.8775897026062012",
+        "mip_psnr": "34.63193832447113",
+        "mip_ssim": "0.9279791712760925"
+      },
+      {
+        "frame_id_one_based": 42,
+        "mip_name_zero_based": "00041.png",
+        "baseline_psnr": "23.897359246769852",
+        "baseline_ssim": "0.7473576664924622",
+        "mip_psnr": "26.081726319048016",
+        "mip_ssim": "0.8322368264198303"
+      },
+      {
+        "frame_id_one_based": 47,
+        "mip_name_zero_based": "00046.png",
+        "baseline_psnr": "24.720635192367446",
+        "baseline_ssim": "0.7665409445762634",
+        "mip_psnr": "31.997611840530706",
+        "mip_ssim": "0.9196508526802063"
+      },
+      {
+        "frame_id_one_based": 52,
+        "mip_name_zero_based": "00051.png",
+        "baseline_psnr": "25.018698566937925",
+        "baseline_ssim": "0.7427875399589539",
+        "mip_psnr": "31.745273120874433",
+        "mip_ssim": "0.906256377696991"
+      },
+      {
+        "frame_id_one_based": 57,
+        "mip_name_zero_based": "00056.png",
+        "baseline_psnr": "26.105733130257516",
+        "baseline_ssim": "0.8153826594352722",
+        "mip_psnr": "33.781620218472966",
+        "mip_ssim": "0.9571353793144226"
+      },
+      {
+        "frame_id_one_based": 63,
+        "mip_name_zero_based": "00062.png",
+        "baseline_psnr": "26.61043622131625",
+        "baseline_ssim": "0.8597701191902161",
+        "mip_psnr": "32.96176578480159",
+        "mip_ssim": "0.9596009254455566"
+      },
+      {
+        "frame_id_one_based": 68,
+        "mip_name_zero_based": "00067.png",
+        "baseline_psnr": "25.7112565733827",
+        "baseline_ssim": "0.8154008984565735",
+        "mip_psnr": "32.14052431250402",
+        "mip_ssim": "0.9423787593841553"
+      },
+      {
+        "frame_id_one_based": 73,
+        "mip_name_zero_based": "00072.png",
+        "baseline_psnr": "26.31664513904791",
+        "baseline_ssim": "0.8544886112213135",
+        "mip_psnr": "32.66344549500524",
+        "mip_ssim": "0.9626113772392273"
+      },
+      {
+        "frame_id_one_based": 78,
+        "mip_name_zero_based": "00077.png",
+        "baseline_psnr": "25.637803429034584",
+        "baseline_ssim": "0.8474774360656738",
+        "mip_psnr": "31.66137451375097",
+        "mip_ssim": "0.9464388489723206"
+      },
+      {
+        "frame_id_one_based": 83,
+        "mip_name_zero_based": "00082.png",
+        "baseline_psnr": "27.220731448959064",
+        "baseline_ssim": "0.8638445734977722",
+        "mip_psnr": "34.38124634653684",
+        "mip_ssim": "0.9498884081840515"
+      },
+      {
+        "frame_id_one_based": 88,
+        "mip_name_zero_based": "00087.png",
+        "baseline_psnr": "25.476006292342618",
+        "baseline_ssim": "0.803361177444458",
+        "mip_psnr": "31.102014647842285",
+        "mip_ssim": "0.890082836151123"
+      },
+      {
+        "frame_id_one_based": 94,
+        "mip_name_zero_based": "00093.png",
+        "baseline_psnr": "28.849037324409473",
+        "baseline_ssim": "0.8885331153869629",
+        "mip_psnr": "32.50789265957423",
+        "mip_ssim": "0.9270761013031006"
+      },
+      {
+        "frame_id_one_based": 99,
+        "mip_name_zero_based": "00098.png",
+        "baseline_psnr": "24.52948024869842",
+        "baseline_ssim": "0.7902879118919373",
+        "mip_psnr": "31.500642777517246",
+        "mip_ssim": "0.9143220782279968"
+      },
+      {
+        "frame_id_one_based": 104,
+        "mip_name_zero_based": "00103.png",
+        "baseline_psnr": "22.463277919063977",
+        "baseline_ssim": "0.7066994309425354",
+        "mip_psnr": "34.05464390570205",
+        "mip_ssim": "0.9601225852966309"
+      },
+      {
+        "frame_id_one_based": 109,
+        "mip_name_zero_based": "00108.png",
+        "baseline_psnr": "26.33143476334682",
+        "baseline_ssim": "0.778596818447113",
+        "mip_psnr": "30.641117251166126",
+        "mip_ssim": "0.8973658680915833"
+      },
+      {
+        "frame_id_one_based": 114,
+        "mip_name_zero_based": "00113.png",
+        "baseline_psnr": "22.90061336009074",
+        "baseline_ssim": "0.6353211998939514",
+        "mip_psnr": "28.859327180092976",
+        "mip_ssim": "0.9025185704231262"
+      },
+      {
+        "frame_id_one_based": 120,
+        "mip_name_zero_based": "00119.png",
+        "baseline_psnr": "21.38226148779593",
+        "baseline_ssim": "0.5371113419532776",
+        "mip_psnr": "30.989661380046392",
+        "mip_ssim": "0.9244217872619629"
+      }
+    ]
+  }
+}
